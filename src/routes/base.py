@@ -1,15 +1,14 @@
-from fastapi import APIRouter
-import os
+from fastapi import APIRouter, Depends
+from helpers.config import Settings, get_settings
+
 base_router = APIRouter(
     prefix="/api",
     tags=["Base"]
 )
 
 @base_router.get("/check")
-def check():
-    api_name = os.getenv('APP_NAME')
-    api_version = os.getenv('APP_VERSION')
+async def check(app_settings: Settings = Depends(get_settings)):
     return {
-        "api_name": api_name,
-        "api_version": api_version
+        "app_name": app_settings.APP_NAME,
+        "app_version": app_settings.APP_VERSION
     }
