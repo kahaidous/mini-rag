@@ -1,8 +1,10 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+load_dotenv()
+
+from routes.base import base_router
 
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello FAST API!"}
+app.include_router(base_router)
