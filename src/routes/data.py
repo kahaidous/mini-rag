@@ -2,10 +2,13 @@ from fastapi import APIRouter, UploadFile, Depends, status
 from fastapi.responses import JSONResponse
 import aiofiles
 import os
+import logging
 
 from helpers.config import Settings, get_settings
-from controllers import DataController, ProjectController
+from controllers import DataController
 from models import ResponseSignal
+
+logger = logging.getLogger("uvicorn.error")
 
 data_router = APIRouter(
     prefix="/api/data",
@@ -28,13 +31,21 @@ async def upload_data(project_id: str,
             }
         )
     else:
-        # Save file to the designated directory
-        file_location = ProjectController().get_project_path(project_id)
-        file_path = os.path.join(file_location, file.filename)
+        
+        file_path = DataController().generate_unique_filename(file.filename, project_id)
 
-        async with aiofiles.open(file_path, 'wb') as out_file:
-            while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
-                await out_file.write(chunk) 
+        try:
+            async with aiofiles.open(file_path, 'wb') as out_file:
+                while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
+                    await out_file.write(chunk)
+        except Exception as e:
+            logger.error(f"Error saving file {file.filename} for project {project_id}: {e}")
+            return JSONResponse(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content={
+                    "response_signal": ResponseSignal.FILE_UPLOAD_FAILED.value,
+                }
+            )
          
         return JSONResponse(
             content={

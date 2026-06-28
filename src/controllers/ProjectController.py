@@ -13,4 +13,4 @@ class ProjectController(BaseController):
         if not os.path.exists(project_dir):
             os.makedirs(project_dir)
         print(f"Project directory for {project_id}: {project_dir}")  # Debugging line
-        return project_dir
+        return project_dir 
