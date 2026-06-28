@@ -12,5 +12,4 @@ wheels/
 .DS_Store
 
 .env
-src/assets/files/*
-!src/assets/files/.gitignore
+assets/files/*
