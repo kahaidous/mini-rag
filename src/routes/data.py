@@ -32,7 +32,7 @@ async def upload_data(project_id: str,
         )
     else:
         
-        file_path = DataController().generate_unique_filename(file.filename, project_id)
+        file_path, random_filename = DataController().generate_unique_filepath(file.filename, project_id)
 
         try:
             async with aiofiles.open(file_path, 'wb') as out_file:
@@ -50,6 +50,7 @@ async def upload_data(project_id: str,
         return JSONResponse(
             content={
                 "is_valid": is_valid,
-                "response_signal": ResponseSignal.FILE_UPLOAD_SUCCESS.value
+                "response_signal": ResponseSignal.FILE_UPLOAD_SUCCESS.value,
+                "file_id": random_filename
           }
         )
