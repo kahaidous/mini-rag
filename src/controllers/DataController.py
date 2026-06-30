@@ -20,8 +20,8 @@ class DataController(BaseController):
             return False, ResponseSignal.FILE_SIZE_EXCEEDED
         return True, ResponseSignal.FILE_UPLOAD_SUCCESS
     
-    def generate_unique_filename(self, original_filename: str, project_id: str):
-        """ Generate a unique filename by appending a random string to the original filename."""
+    def generate_unique_filepath(self, original_filename: str, project_id: str):
+        """ Generate a unique filepath by appending a random string to the original filename."""
         random_filename = self.generate_random_string()
         project_path = ProjectController().get_project_path(project_id)
         new_filepath = os.path.join(
@@ -37,7 +37,7 @@ class DataController(BaseController):
                 random_filename + "_" 
                 + self.get_clean_filename(original_filename)
             )
-        return new_filepath
+        return new_filepath, random_filename + "_" + self.get_clean_filename(original_filename)
     
     def get_clean_filename(self, original_filename:str):
         # Remove any special characters except underscores and periods
